@@ -48,7 +48,7 @@ function setupVoiceCommands(newsMonitorInstance) {
                     console.log('Voice detected, but no recognized command:', transcript);
                     const errorDiv = document.getElementById('voice-error');
                     if (errorDiv) {
-                        const prompts = ['Try again', 'Say that again', 'Say next or back'];
+                        const prompts = ['Try again', 'Say that again', 'Say next or go back'];
                         errorDiv.textContent = prompts[Math.floor(Math.random() * prompts.length)];
                         errorDiv.style.opacity = '1';
                         errorDiv.classList.remove('voice-glow');
@@ -79,7 +79,7 @@ function setupVoiceCommands(newsMonitorInstance) {
     // Show initial instruction
     const errorDiv = document.getElementById('voice-error');
     if (errorDiv) {
-        errorDiv.textContent = 'Say next or back';
+        errorDiv.textContent = 'Say next or go back';
     }
 }
 
