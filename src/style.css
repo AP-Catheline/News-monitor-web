@@ -33,7 +33,7 @@ body {
 #bg-overlay {
     position: fixed;
     inset: 0;
-    background: #242423;
+    background: #242423; /* Dark background for overlay */
     opacity: 0; /* start hidden */
     z-index: 0.5; /* sits above video (0) but below main content (1) */
     pointer-events: none;
@@ -221,6 +221,9 @@ body {
     --y: 50%;
     --dx: 0; /* -0.5..0.5 range via JS */
     --dy: 0;
+    /* Idle drift offsets (animated via @property) */
+    --fx: 0px;
+    --fy: 0px;
     position: relative;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.05);
@@ -242,7 +245,7 @@ body {
         box-shadow 0.45s ease,
         transform 0.15s ease;
     will-change: transform;
-    transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px));
+    transform: translate(calc(var(--dx) * 6px + var(--fx)), calc(var(--dy) * 6px + var(--fy)));
 }
 
 .command-btn:focus-visible {
@@ -328,6 +331,104 @@ body {
     }
     100% {
         transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px)) scale(1);
+    }
+}
+
+/* Register custom properties so they interpolate smoothly */
+@property --fx {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+@property --fy {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
+/* Idle drift (very subtle) */
+@keyframes navDrift {
+    0% {
+        --fx: 0px;
+        --fy: 0px;
+    }
+    15% {
+        --fx: 5px;
+        --fy: -4px;
+    }
+    30% {
+        --fx: -4px;
+        --fy: 6px;
+    }
+    45% {
+        --fx: 6px;
+        --fy: 3px;
+    }
+    60% {
+        --fx: -6px;
+        --fy: -5px;
+    }
+    75% {
+        --fx: 4px;
+        --fy: 6px;
+    }
+    90% {
+        --fx: -3px;
+        --fy: -4px;
+    }
+    100% {
+        --fx: 0px;
+        --fy: 0px;
+    }
+}
+
+/* Idle glow pulse using magenta/violet mix */
+@keyframes idleGlowPulse {
+    0% {
+        box-shadow:
+            0 0 10px -2px rgba(242, 224, 136, 0.75),
+            /* brighter gold core */ 0 0 18px -4px rgba(93, 89, 217, 0.55),
+            /* indigo mid */ 0 0 34px -6px rgba(114, 17, 140, 0.45),
+            /* deep violet */ 0 0 52px -8px rgba(242, 224, 136, 0.4),
+            /* gold halo */ 0 0 80px -12px rgba(93, 89, 217, 0.35); /* extended indigo */
+    }
+    50% {
+        box-shadow:
+            0 0 16px -2px rgba(242, 224, 136, 0.95),
+            /* peak gold */ 0 0 30px -4px rgba(93, 89, 217, 0.65),
+            0 0 60px -6px rgba(114, 17, 140, 0.55),
+            0 0 92px -10px rgba(242, 224, 136, 0.55),
+            0 0 130px -14px rgba(93, 89, 217, 0.4),
+            0 0 170px -18px rgba(242, 224, 136, 0.3); /* far gold haze */
+    }
+    100% {
+        box-shadow:
+            0 0 10px -2px rgba(242, 224, 136, 0.75),
+            0 0 18px -4px rgba(93, 89, 217, 0.55),
+            0 0 34px -6px rgba(114, 17, 140, 0.45),
+            0 0 52px -8px rgba(242, 224, 136, 0.4),
+            0 0 80px -12px rgba(93, 89, 217, 0.35);
+    }
+}
+
+/* Apply idle animations only when not hovered or in nav-glow state */
+#btn-go-back:not(:hover):not(.nav-glow),
+#btn-next:not(:hover):not(.nav-glow) {
+    /* Base gentle glow behind button */
+    animation:
+        navDrift 13s ease-in-out infinite,
+        idleGlowPulse 7s ease-in-out infinite;
+}
+
+/* Suppress idle box-shadow when active glow is applied */
+
+/* Optional: reduce idle animation influence on mobile for stability */
+@media (max-width: 680px) {
+    #btn-go-back:not(:hover):not(.nav-glow),
+    #btn-next:not(:hover):not(.nav-glow) {
+        animation:
+            navDrift 16s ease-in-out infinite,
+            idleGlowPulse 9s ease-in-out infinite;
     }
 }
 
