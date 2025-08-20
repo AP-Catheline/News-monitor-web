@@ -1,0 +1,434 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Chakra Petch', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #111;
+    height: 100vh;
+    overflow: hidden;
+    color: #333;
+    position: relative;
+}
+
+#bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Dark overlay above background video */
+/* Allow tweaking fade duration with a CSS variable */
+:root {
+    --overlay-fade-duration: 20s;
+}
+
+#bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: #242423;
+    opacity: 0; /* start hidden */
+    z-index: 0.5; /* sits above video (0) but below main content (1) */
+    pointer-events: none;
+    transition: opacity var(--overlay-fade-duration) ease;
+}
+
+#bg-overlay.overlay-active {
+    opacity: 0.95; /* target 95% */
+}
+
+/* Faster fade-out when user interacts again */
+#bg-overlay:not(.overlay-active) {
+    transition: opacity 0.5s ease; /* override to speed up hide */
+}
+
+/* Make sure main content is above the canvas */
+.main-layout,
+.center-panel,
+.youtube-container,
+.video-player,
+.voice-status {
+    position: relative;
+    z-index: 1;
+}
+
+/* Three-column layout */
+.main-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Center panel - YouTube container */
+.center-panel {
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+    border-radius: 12px;
+    max-width: 600px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.youtube-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Smartphone effect: full screen height, responsive width */
+.video-player {
+    width: 100%;
+    aspect-ratio: 9/16; /* Portrait aspect ratio for shorts */
+    max-width: 500px;
+    max-height: 70vh;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-player iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Glow effect around video when switching (mirrors button glow style) */
+.video-player.video-glow {
+    position: relative;
+    box-shadow:
+        0 0 14px -2px var(--vp-glow-color, #5d59d9),
+        0 0 50px -8px var(--vp-glow-color-2, #22f2f2),
+        0 0 90px -12px rgba(242, 224, 136, 0.45);
+}
+.video-player.video-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px; /* border thickness */
+    border-radius: 20px; /* match .video-player */
+    background: linear-gradient(
+        120deg,
+        var(--vp-glow-color, #5d59d9),
+        var(--vp-glow-color-2, #22f2f2),
+        #f2e088
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    animation: vpGlowFade 1.8s ease forwards;
+    filter: drop-shadow(0 0 10px var(--vp-glow-color, #5d59d9))
+        drop-shadow(0 0 26px var(--vp-glow-color-2, #22f2f2))
+        drop-shadow(0 0 60px rgba(242, 224, 136, 0.45));
+}
+
+@keyframes vpGlowFade {
+    0% {
+        opacity: 0;
+    }
+    12% {
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Voice status */
+.voice-status {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    padding: 12px 24px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+#voice-error {
+    color: white;
+    font-weight: 500;
+    font-size: 1em;
+}
+
+#voice-error {
+    opacity: 1;
+    font-family: 'Chakra Petch', sans-serif;
+    font-weight: 400; /* regular weight */
+}
+
+#voice-error.voice-glow {
+    position: relative;
+    box-shadow:
+        0 0 12px -2px var(--vp-glow-color, #5d59d9),
+        0 0 46px -8px var(--vp-glow-color-2, #22f2f2),
+        0 0 80px -10px rgba(242, 224, 136, 0.45);
+}
+#voice-error.voice-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: 25px;
+    background: linear-gradient(120deg, #5d59d9, #22f2f2, #f2e088);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    animation: vpGlowFade 1.8s ease forwards;
+    filter: drop-shadow(0 0 10px #5d59d9) drop-shadow(0 0 24px #22f2f2)
+        drop-shadow(0 0 60px rgba(242, 224, 136, 0.55));
+}
+
+/* Command buttons (glowing corner & cursor-follow effect) */
+
+.command-btn {
+    --glow-color: #5d59d9;
+    --glow-color-2: #22f2f2;
+    --x: 50%;
+    --y: 50%;
+    --dx: 0; /* -0.5..0.5 range via JS */
+    --dy: 0;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 10px 20px;
+    border-radius: 22px;
+    cursor: pointer;
+    font-family: 'Chakra Petch', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+    transition:
+        border-color 0.35s ease,
+        color 0.35s ease,
+        background 0.35s ease,
+        box-shadow 0.45s ease,
+        transform 0.15s ease;
+    will-change: transform;
+    transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px));
+}
+
+.command-btn:focus-visible {
+    outline: 2px solid var(--glow-color);
+    outline-offset: 3px;
+}
+
+/* Radial glow following cursor */
+.command-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at var(--x) var(--y),
+        rgba(78, 203, 255, 0.55),
+        rgba(93, 89, 217, 0.35) 40%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+/* Gradient border glow using mask (keeps interior semi-transparent) */
+.command-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px; /* synthetic border thickness */
+    border-radius: 22px;
+    background: linear-gradient(120deg, var(--glow-color), var(--glow-color-2), #ff8c00);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    filter: drop-shadow(0 0 4px var(--glow-color)) drop-shadow(0 0 12px var(--glow-color-2));
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+.command-btn:hover::before,
+.command-btn:hover::after {
+    opacity: 1;
+}
+
+.command-btn:hover {
+    border-color: var(--glow-color);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow:
+        0 0 6px -1px var(--glow-color),
+        0 0 24px -4px var(--glow-color-2);
+}
+
+.command-btn:active {
+    transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px)) scale(0.97);
+}
+
+/* Programmatic glow when switching videos */
+.command-btn.nav-glow {
+    border-color: var(--glow-color);
+    background: rgba(255, 255, 255, 0.17); /* +~5% opacity */
+    box-shadow:
+        0 0 11px -1px var(--glow-color),
+        /* +~10% radius for subtle boost */ 0 0 34px -4px var(--glow-color-2),
+        0 0 63px -6px rgba(255, 140, 0, 0.47);
+    animation: navPulse 1.2s ease forwards;
+}
+.command-btn.nav-glow::before,
+.command-btn.nav-glow::after {
+    opacity: 1 !important;
+}
+@keyframes navPulse {
+    0% {
+        transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px)) scale(0.98);
+    }
+    50% {
+        transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px)) scale(1.05); /* +~5% peak */
+    }
+    100% {
+        transform: translate(calc(var(--dx) * 6px), calc(var(--dy) * 6px)) scale(1);
+    }
+}
+
+/* Side button wrappers (fixed positioning) */
+.side-button-wrapper {
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    display: flex;
+    left: 0; /* JS will override */
+    transition:
+        left 0.35s ease,
+        top 0.25s ease;
+}
+
+/* Ensure side buttons adopt voice-status look */
+.side-button-wrapper .command-btn.voice-status {
+    border-radius: 44px; /* +~15% from 38px */
+    padding: 22px 42px; /* +~15% from 19px 36px */
+    backdrop-filter: blur(10px);
+    font-size: 23px; /* +~15% from 20px */
+}
+
+@media (max-width: 680px) {
+    .side-button-wrapper .command-btn.voice-status {
+        padding: 20px 29px; /* +~15% from 17px 25px */
+        font-size: 22px; /* +~15% from 19px */
+    }
+    /* When stacked below video, center by translateX only */
+    .side-button-wrapper {
+        transform: translate(-50%, 0); /* remove vertical centering shift */
+    }
+    /* Ensure absolute positioning behavior remains consistent for different vertical tops */
+    .side-button-wrapper.left,
+    .side-button-wrapper.right {
+        width: auto;
+    }
+    /* Fixed top for back button */
+    .side-button-wrapper.left {
+        top: 36px !important;
+    }
+    /* Next button positioned below video via CSS var set in JS */
+    .side-button-wrapper.right {
+        left: 50%;
+        top: calc(var(--video-bottom, 0px) + 40px) !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .side-panel {
+        padding: 20px;
+        height: auto;
+    }
+
+    .panel-content {
+        max-width: none;
+    }
+
+    .filler-content {
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .update-item,
+    .fact-item {
+        min-width: 150px;
+    }
+
+    .video-player {
+        max-height: 60vh;
+    }
+
+    .center-panel {
+        order: 2;
+    }
+
+    .left-panel {
+        order: 1;
+    }
+}
+
+@media (max-width: 600px) {
+    .side-panel {
+        padding: 15px;
+    }
+
+    .panel-content h2 {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+
+    .panel-content p {
+        margin-bottom: 20px;
+    }
+}
+
+/* Removed unused gesture & legacy styles */

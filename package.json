@@ -1,0 +1,16 @@
+{
+    "name": "news-monitor-web",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite --host",
+        "dev-https": "vite --host --https",
+        "build": "vite build",
+        "preview": "vite preview",
+        "serve": "vite preview --host"
+    },
+    "devDependencies": {
+        "vite": "^5.0.0"
+    }
+}

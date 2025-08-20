@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>News Monitor</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="src/style.css" />
+
+        <!-- Chromatic background and Shorts list moved to main.js -->
+        <script type="module" src="src/main.js"></script>
+    </head>
+    <body>
+        <video id="bg-video" autoplay muted loop playsinline src="/Render_02.mp4"></video>
+        <!-- Dark overlay above background video -->
+        <div id="bg-overlay"></div>
+
+        <div class="main-layout">
+            <div class="center-panel">
+                <div class="youtube-container">
+                    <div id="voice-error" class="voice-status"></div>
+                    <div class="video-player">
+                        <iframe
+                            id="news-iframe"
+                            src=""
+                            title="News Shorts Player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        >
+                        </iframe>
+                    </div>
+                    <!-- Voice command buttons moved to side fixed positions -->
+                </div>
+            </div>
+        </div>
+        <!-- Side fixed navigation buttons -->
+        <div class="side-button-wrapper left">
+            <button id="btn-go-back" class="command-btn voice-status" aria-label="Previous video">
+                back
+            </button>
+        </div>
+        <div class="side-button-wrapper right">
+            <button id="btn-next" class="command-btn voice-status" aria-label="Next video">
+                next
+            </button>
+        </div>
+    </body>
+</html>
