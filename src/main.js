@@ -129,6 +129,11 @@ window.SHORTS_LIST = [
     'https://www.youtube.com/embed/rvOpkUMChto',
     'https://www.youtube.com/embed/bFx8e_HzR6U',
     'https://www.youtube.com/embed/8K2O8HZ2CMM',
+    'https://www.youtube.com/embed/NTGALhLFLto',
+    'https://www.youtube.com/embed/bos4ko8vYaU',
+    'https://www.youtube.com/embed/BPXJSlOW74s',
+    'https://www.youtube.com/embed/T0k1CRGyDdA',
+    'https://www.youtube.com/embed/drEpEp_bink',
 ];
 class NewsMonitor {
     constructor() {
