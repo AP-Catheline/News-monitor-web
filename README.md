@@ -4,6 +4,8 @@ Voice-driven YouTube Shorts viewer with English commands, keyboard navigation, r
 
 Watch the final result on Vimeo: https://vimeo.com/1113295145/7aa2ef3583?share=copy
 
+[![Watch the video on Vimeo](public/Thumbnail_video.jpgthumbnail_video.jpg)](https://vimeo.com/1113295145/7aa2ef3583?share=copy)
+
 ## Features
 
 - Voice commands: "next" / "go back" or "back"
