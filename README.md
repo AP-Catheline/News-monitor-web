@@ -6,7 +6,7 @@ Watch the final result on Vimeo: https://vimeo.com/1113295145/7aa2ef3583?share=c
 
 ## Features
 
-- Voice commands: "next" / "back" (also Dutch: "volgende", "terug", etc.)
+- Voice commands: "next" / "go back" or "back"
 - Keyboard: ArrowRight / ArrowLeft
 - Randomized (shuffled) playlist of Shorts, each loops until you switch
 - Responsive layout with mobile button repositioning
