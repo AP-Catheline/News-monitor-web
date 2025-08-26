@@ -19,6 +19,12 @@ Voice-driven YouTube Shorts viewer with English/Dutch commands, keyboard navigat
 - YouTube iframe embeds (/embed/ + loop + autoplay)
 - Pure CSS animations & custom properties
 
+## Prerequisites
+
+- Node.js 18+ (Vite 5 requires Node >= 18)
+- npm 9+ (or pnpm/yarn if you prefer)
+- Recommended browsers for voice: Chrome or Edge (Web Speech API support)
+
 ## Getting Started
 
 Install deps and run dev server:
@@ -29,6 +35,14 @@ npm run dev
 ```
 
 Then open the printed local URL (default http://localhost:3000). Allow microphone permission.
+
+Need HTTPS locally (optional, for stricter mic policies)?
+
+```bash
+npm run dev-https
+```
+
+Your browser may prompt to trust a self-signed certificate once.
 
 ## Build for Production
 
@@ -51,6 +65,13 @@ git subtree push --prefix dist origin gh-pages
 ```
 
 Enable Pages on the `gh-pages` branch in repository settings.
+
+If deploying under a repo subpath (https://<user>.github.io/<repo>/):
+
+- Set a base path in `vite.config.js`:
+    - `export default defineConfig({ base: '/News-monitor-web/', ... })`
+- Avoid leading slashes for public assets in `index.html` (use `Render_02_compressed.mp4` and `banknote.png`, not `/Render_02_compressed.mp4` or `/banknote.png`).
+  This ensures assets load correctly on GitHub Pages.
 
 ## Configuration Tweaks
 
