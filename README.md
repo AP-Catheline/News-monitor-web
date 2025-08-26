@@ -1,6 +1,6 @@
 # News Monitor Web
 
-Voice-driven YouTube Shorts viewer with English/Dutch commands, keyboard navigation, responsive layout, glow visuals, and idle dimming overlay.
+Voice-driven YouTube Shorts viewer with English commands, keyboard navigation, responsive layout, glow visuals, and idle dimming overlay.
 
 Watch the final result on Vimeo: https://vimeo.com/1113295145/7aa2ef3583?share=copy
 
