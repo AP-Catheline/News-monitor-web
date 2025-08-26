@@ -140,6 +140,14 @@ class NewsMonitor {
         this.shorts = this.shuffleArray([...(window.SHORTS_LIST || [])]); // shuffled order
         this.currentIndex = 0;
         this.videoPlayer = document.getElementById('news-iframe');
+        // Revenue counter state
+        this.revenueTotal = 0;
+        this.revenueEl = document.querySelector('#money-pit .msg-counter');
+        this.leadEl = document.querySelector('#money-pit .msg-lead');
+        this.moneyPit = document.getElementById('money-pit');
+        // Track last platform to avoid 3 in a row
+        this._lastPlatform = null;
+        this._repeatCount = 0;
         this.loadCurrentVideo();
         this.bindEvents();
         // Removed timer auto-advance; videos loop until user switches
@@ -222,12 +230,14 @@ class NewsMonitor {
         this.currentIndex = (this.currentIndex + 1) % this.shorts.length;
         this.loadCurrentVideo();
         this.flashNavButton('next');
+        this.bumpRevenue();
     }
 
     previousVideo() {
         this.currentIndex = (this.currentIndex - 1 + this.shorts.length) % this.shorts.length;
         this.loadCurrentVideo();
         this.flashNavButton('back');
+        this.bumpRevenue();
     }
 
     loadCurrentVideo() {
@@ -242,6 +252,9 @@ class NewsMonitor {
                 url += `${sep}autoplay=1&loop=1${videoId ? `&playlist=${videoId}` : ''}`;
             }
             this.videoPlayer.src = url;
+            // Update money-pit lead text and highlight
+            this.updateMoneyPitLead();
+            this.highlightMoneyPit();
             // Reset overlay when switching
             const overlay = document.getElementById('bg-overlay');
             if (overlay) {
@@ -271,6 +284,35 @@ class NewsMonitor {
         } else {
             this.videoPlayer.src = '';
         }
+    }
+    updateMoneyPitLead() {
+        if (!this.leadEl) return;
+        const platforms = ['Facebook', 'Instagram', 'YouTube', 'TikTok'];
+        let pick;
+        if (this._lastPlatform && this._repeatCount >= 2) {
+            // Force a different platform
+            const choices = platforms.filter((p) => p !== this._lastPlatform);
+            pick = choices[Math.floor(Math.random() * choices.length)];
+        } else {
+            pick = platforms[Math.floor(Math.random() * platforms.length)];
+        }
+        this.leadEl.textContent = `you gave money to ${pick}`;
+        // Update repeat tracking
+        if (pick === this._lastPlatform) {
+            this._repeatCount += 1;
+        } else {
+            this._lastPlatform = pick;
+            this._repeatCount = 1;
+        }
+    }
+    highlightMoneyPit() {
+        if (!this.moneyPit) return;
+        this.moneyPit.classList.remove('highlight');
+        // reflow to restart transition
+        void this.moneyPit.offsetWidth;
+        this.moneyPit.classList.add('highlight');
+        clearTimeout(this._mpTimer);
+        this._mpTimer = setTimeout(() => this.moneyPit.classList.remove('highlight'), 1200);
     }
     updateSideButtonsPosition() {
         const videoWrapper = document.querySelector('.video-player');
@@ -314,6 +356,29 @@ class NewsMonitor {
         btn.classList.add('nav-glow');
         clearTimeout(btn._navGlowTimer);
         btn._navGlowTimer = setTimeout(() => btn.classList.remove('nav-glow'), 1300);
+    }
+    // Increment revenue by a small random amount and render as currency
+    bumpRevenue() {
+        const delta = this.randomRevenueDelta();
+        this.revenueTotal += delta;
+        if (this.revenueEl) {
+            this.revenueEl.textContent = this.formatCurrency(this.revenueTotal);
+        }
+    }
+    randomRevenueDelta() {
+        // Random between €0.01 and €0.37 per interaction (tweak as desired)
+        const min = 0.01;
+        const max = 0.37;
+        return Math.round((Math.random() * (max - min) + min + Number.EPSILON) * 100) / 100;
+    }
+    formatCurrency(value) {
+        try {
+            return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'EUR' }).format(
+                value
+            );
+        } catch {
+            return '€' + value.toFixed(2);
+        }
     }
 } // <-- Properly close NewsMonitor class
 // Removed unused dynamic fadeInOut animation injection

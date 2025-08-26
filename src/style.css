@@ -212,6 +212,99 @@ body {
         drop-shadow(0 0 60px rgba(242, 224, 136, 0.55));
 }
 
+/* Money-pit message under the video */
+.money-pit {
+    --glow-green-1: #00c389;
+    --glow-green-2: #2ee59d;
+    --glow-green-3: #9ff2cf;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+    background: rgba(15, 77, 52, 0.35); /* default low opacity */
+    border: 1px solid rgba(159, 242, 207, 0.35);
+    padding: 12px 16px;
+    border-radius: 16px;
+    position: relative;
+    transition:
+        background-color 0.4s ease,
+        background 0.4s ease;
+    box-shadow:
+        0 0 8px -2px rgba(0, 195, 137, 0.6),
+        0 0 24px -6px rgba(46, 229, 157, 0.45),
+        0 0 56px -10px rgba(159, 242, 207, 0.35);
+}
+.money-pit.highlight {
+    background: rgba(15, 77, 52, 0.85); /* bump to ~85% on change */
+}
+.money-pit .msg-lead {
+    color: #c7f7e5;
+    font-weight: 600;
+}
+.money-pit .msg-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(46, 229, 157, 0.5));
+}
+.money-pit .msg-text {
+    color: #e9fff6;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+.money-pit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px; /* synthetic border thickness */
+    border-radius: 16px;
+    background: linear-gradient(
+        120deg,
+        var(--glow-green-1),
+        var(--glow-green-2),
+        var(--glow-green-3)
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 6px var(--glow-green-1)) drop-shadow(0 0 18px var(--glow-green-2))
+        drop-shadow(0 0 40px var(--glow-green-3));
+}
+
+/* Idle pulse similar to side buttons but in green shades */
+.money-pit {
+    animation: savingsGlowPulse 8s ease-in-out infinite;
+}
+@keyframes savingsGlowPulse {
+    0% {
+        box-shadow:
+            0 0 8px -2px rgba(0, 195, 137, 0.5),
+            0 0 24px -6px rgba(46, 229, 157, 0.35),
+            0 0 46px -10px rgba(159, 242, 207, 0.25);
+    }
+    50% {
+        box-shadow:
+            0 0 14px -2px rgba(0, 195, 137, 0.8),
+            0 0 44px -6px rgba(46, 229, 157, 0.6),
+            0 0 90px -10px rgba(159, 242, 207, 0.45);
+    }
+    100% {
+        box-shadow:
+            0 0 8px -2px rgba(0, 195, 137, 0.5),
+            0 0 24px -6px rgba(46, 229, 157, 0.35),
+            0 0 46px -10px rgba(159, 242, 207, 0.25);
+    }
+}
+
 /* Command buttons (glowing corner & cursor-follow effect) */
 
 .command-btn {
@@ -474,7 +567,7 @@ body {
     /* Next button positioned below video via CSS var set in JS */
     .side-button-wrapper.right {
         left: 50%;
-        top: calc(var(--video-bottom, 0px) + 40px) !important;
+        top: calc(var(--video-bottom, 0px) + 70px) !important;
     }
 }
 
